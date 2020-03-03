@@ -270,11 +270,11 @@ module.exports = {
       });
 
     if (mocks.component) {
-      const originalGetComponent = window.require(`/${this.config.markoBundleName}/src/components/Component`).prototype.getComponent;
+      const originalGetComponent = window.require(`/${this.config.markoBundleName}/src/runtime/components/Component`).prototype.getComponent;
 
-      window.require(`/${this.config.markoBundleName}/src/components/Component`).prototype.originalGetComponent = originalGetComponent;
+      window.require(`/${this.config.markoBundleName}/src/runtime/components/Component`).prototype.originalGetComponent = originalGetComponent;
 
-      window.require(`/${this.config.markoBundleName}/src/components/Component`).prototype.getComponent = (id, index) =>
+      window.require(`/${this.config.markoBundleName}/src/runtime/components/Component`).prototype.getComponent = (id, index) =>
         mocks.component[id] || originalGetComponent.call(originalGetComponent, id, index);
     }
   },
@@ -296,8 +296,8 @@ module.exports = {
       });
 
     if (mock.component) {
-      window.require(`/${this.config.markoBundleName}/src/components/Component`).prototype.getComponent = window.require(`/${this.config.markoBundleName}/src/components/Component`).prototype.originalGetComponent;
-      delete window.require(`/${this.config.markoBundleName}/src/components/Component`).prototype.originalGetComponent;
+      window.require(`/${this.config.markoBundleName}/src/runtime/components/Component`).prototype.getComponent = window.require(`/${this.config.markoBundleName}/src/runtime/components/Component`).prototype.originalGetComponent;
+      delete window.require(`/${this.config.markoBundleName}/src/runtime/components/Component`).prototype.originalGetComponent;
     }
   },
 
