@@ -19,7 +19,7 @@ const buildComponent = (context, opts, cb) => {
             utils.mockBrowser(context, options.mock);
           }
         })
-        .then(done);
+        .then(done, done);
     });
 
     beforeEach((done) => {
@@ -28,7 +28,8 @@ const buildComponent = (context, opts, cb) => {
       window.$_mod.require(context.modulePath)
         .render(fixture, (err, renderResult) => {
           if (err) {
-            done(new Error(`BuildComponent: ${err}`));
+            done(err);
+            return;
           }
 
           const layout = options.layout || 'container';

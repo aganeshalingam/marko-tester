@@ -134,28 +134,26 @@ module.exports = {
   },
 
   get renderer() {
-    let rendererPath = glob.sync(path.resolve(
-      path.join(this.testPath, '..'),
-      'index.@(marko|js)'
-    )).sort(f1 => !(/marko$/.test(f1)));
-    let renderer;
-
-    if (rendererPath && rendererPath.length > 0) {
-      renderer = rendererPath[0];
+    let rendererPath;
+    if (!rendererPath) {
+      rendererPath = path.resolve(this.testPath, '..', 'index.marko');
     }
-
-    if (renderer) {
-      renderer = require(renderer);
-
-      if (!renderer.renderToString) {
-        renderer.renderToString = renderer.render;
-      }
-    } else {
-      renderer = {
-        renderToString: null
-      };
+    if (!fs.existsSync(rendererPath)) {
+      rendererPath = path.resolve(this.testPath, '..', 'renderer.js');
     }
-
+    if (!fs.existsSync(rendererPath)) {
+      rendererPath = path.resolve(this.testPath, '..', 'index.js');
+    }
+    if (!fs.existsSync(rendererPath)) {
+      rendererPath = path.resolve(this.testPath, '..', 'template.marko');
+    }
+    if (!rendererPath) {
+      throw new Error("Unable to find renderer for " + JSON.stringify(this.testPath));
+    }
+    let renderer = require(rendererPath);
+    if (!renderer.renderToString) {
+      renderer.renderToString = renderer.render;
+    }
     return renderer;
   },
 
@@ -232,15 +230,20 @@ module.exports = {
 
   addBrowserDependency(markoPath) {
     if (!markoPath) {
-      markoPath = path.resolve(this.testPath, '..', 'index.marko');
+        markoPath = path.resolve(this.testPath, '..', 'index.marko');
     }
-
     if (!fs.existsSync(markoPath)) {
-      markoPath = path.resolve(this.testPath, '..', 'index.js');
+        markoPath = path.resolve(this.testPath, '..', 'renderer.js');
+    }
+    if (!fs.existsSync(markoPath)) {
+        markoPath = path.resolve(this.testPath, '..', 'index.js');
+    }
+    if (!fs.existsSync(markoPath)) {
+        markoPath = path.resolve(this.testPath, '..', 'template.marko');
     }
 
     if (fs.existsSync(markoPath)) {
-      config.dependencies.push(`require: ${markoPath}`);
+        config.dependencies.push(`require: ${markoPath}`);
     }
 
     return path.relative(rootPath, markoPath);
